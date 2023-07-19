@@ -18,13 +18,14 @@ radius = (1.8e3, 'km')
 # Setting up the data to render as the Source part of the Scene (sc)
 core = ds.sphere(ds.domain_center, radius)
 my_source = create_volume_source(core, field)
+my_source.set_log(False)
 
 ### Transfer Function (Coloring)
-bounds = (2e5, 4e5) # These are the bounds for 
+bounds = (1e5, 2e5) # These are the bounds for 
 # setup our transfer function
 tfh = TransferFunctionHelper(ds) # this object helps with some of the syntax
 tfh.set_field(field) # set what field we are looking at. Should match the source.
-tfh.set_log(True) # volume rendering generally looks best in logspace
+tfh.set_log(False) # volume rendering generally looks best in logspace
 tfh.grey_opacity = False
 tfh.set_bounds(bounds)
 tfh.build_transfer_function() # this generates a blank transfer function
@@ -39,7 +40,7 @@ tfh.build_transfer_function() # this generates a blank transfer function
     #colormap='inferno', # Changes the color map
 #)
 
-tfh.tf.map_to_colormap(np.log10(bounds[0]), np.log10(bounds[1]), colormap="twilight", scale=1e-1)
+tfh.tf.map_to_colormap(bounds[0], bounds[1], colormap="twilight")
 
 my_source.transfer_function = tfh.tf
 
@@ -62,4 +63,4 @@ sc.camera.set_width(radius)
 
 sc.render()
 if yt.is_root():
-    sc.save(f'/gpfs/projects/CalderGroup/KianSpace/reu2023/plots/urca/3d_render_{field[1]}', render=False, sigma_clip=2)
+    sc.save(f'/gpfs/projects/CalderGroup/KianSpace/plots/urca/3d_renders/frames/3d_render_{field[1]}', render=False, sigma_clip=2)
